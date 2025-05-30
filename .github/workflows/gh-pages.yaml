@@ -1,4 +1,7 @@
-# env:
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [master] # Or your main branch# env:
 #   VITE_REPO_NAME: ${{ github.event.repository.name }}
 #   VITE_SERVER_URL='https://this-is-a-server-url.com'
 
