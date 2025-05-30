@@ -5,6 +5,10 @@ on:
 #   VITE_REPO_NAME: ${{ github.event.repository.name }}
 #   VITE_SERVER_URL='https://this-is-a-server-url.com'
 
+permissions:
+  id-token: write
+  pages: write
+
 jobs:
   deploy:
     environment:
