@@ -16,10 +16,10 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <style scoped>
-header {
-  /* line-height: 1.5;
-  max-height: 100vh; */
-}
+/* header {
+  line-height: 1.5;
+  max-height: 100vh;
+} */
 
 .logo {
   display: block;
@@ -27,10 +27,10 @@ header {
 }
 
 nav {
-  width: 100%;
-  font-size: 12px;
+  /* width: 100%; */
+  font-size: 1rem;
   /* text-align: center; */
-  margin-top: 2rem;
+  /* margin-top: 2rem; */
 }
 
 nav a.router-link-exact-active {

@@ -8,7 +8,8 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue(), vueJsx(), vueDevTools()],
-  base: process.env.NODE_ENV === 'production' ? '/crew-client/' : '/',
+  base: '/',
+  // base: process.env.NODE_ENV === 'production' ? '/crew-client/' : '/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

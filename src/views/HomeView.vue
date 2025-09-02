@@ -1,55 +1,51 @@
 <script setup lang="ts">
+import { fetchSystemsByName } from '@/client'
+import type { System } from '@/types/System'
 import { ref } from 'vue'
 
-const socket = ref<WebSocket | null>(null)
-const isConnected = ref(false)
+const systemName = ref('')
+const searchResults = ref<System[]>([])
+const errorMsg = ref('')
 
-function openWebSocket() {
-  if (socket.value) {
-    console.log('WebSocket already opened.')
-    return
-  }
+async function searchSystem(e: Event) {
+  e.preventDefault()
+  if (!systemName.value) return
 
-  socket.value = new WebSocket('ws://192.168.0.108:8000/ws')
-
-  socket.value.onopen = () => {
-    isConnected.value = true
-    console.log('WebSocket connection opened.')
-
-    // Send a JSON message once the socket opens
-    const message = {
-      action: 'post_message',
-      request: {
-        receiver: '#ship',
-        id: 'ToggleCargoScoop',
-        message: {},
-      },
-    }
-
-    socket.value?.send(JSON.stringify(message))
-    console.log('Sent JSON:', message)
-  }
-
-  socket.value.onmessage = (event) => {
-    console.log('Received:', event.data)
-  }
-
-  socket.value.onclose = () => {
-    isConnected.value = false
-    console.log('WebSocket connection closed.')
-  }
-
-  socket.value.onerror = (error) => {
-    console.error('WebSocket error:', error)
+  try {
+    const systems = await fetchSystemsByName(systemName.value)
+    searchResults.value = systems
+  } catch (err: unknown) {
+    errorMsg.value = (err as Error).message || 'Error searching system'
   }
 }
 </script>
 
 <template>
   <main>
-    <button @click="openWebSocket" :disabled="isConnected">
-      {{ isConnected ? 'Connected' : 'Open WebSocket' }}
-    </button>
+    <form @submit="searchSystem">
+      <input
+        name="system"
+        type="text"
+        v-model="systemName"
+        placeholder="Enter star system name"
+        autocomplete="off"
+      />
+      <button type="submit">Search</button>
+    </form>
+    <div v-if="errorMsg" style="color: red">{{ errorMsg }}</div>
+    <div v-if="searchResults.length">
+      <h2>Results</h2>
+      <ul>
+        <li v-for="system in searchResults" :key="system.address">
+          <strong>
+            <a :href="`/systems/${system.address}`">{{ system.name }}</a> </strong
+          ><br />
+          Address: {{ system.address }}<br />
+          Position: (x: {{ system.position.x }}, y: {{ system.position.y }}, z:
+          {{ system.position.z }})
+        </li>
+      </ul>
+    </div>
   </main>
 </template>
 
@@ -59,5 +55,16 @@ button {
   padding: 0.5rem 1rem;
   font-size: 1rem;
   cursor: pointer;
+}
+ul {
+  margin-top: 1rem;
+  padding-left: 1rem;
+}
+li {
+  margin-bottom: 0.5rem;
+}
+a {
+  color: #1976d2;
+  text-decoration: underline;
 }
 </style>
